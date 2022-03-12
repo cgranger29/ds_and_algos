@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class BinaryNumber{
 
     private int data[];
@@ -27,20 +29,22 @@ public class BinaryNumber{
     }
 
     public void shiftR(int amount){
-        // need to implement
+        reallocate(data, amount + data.length);
+
     }
 
     public void add(BinaryNumber aBinaryNumber){
         // need to implement
     }
 
+    @Override
     public String toString(){
-        // need to implement
+        return Arrays.toString(data);
     }
 
-    public int toDecimal(){
-        // need to implement
-    }
+    // public int toDecimal(){
+    //     // need to implement
+    // }
 
     public void clearOverflow(){
         // need to implement
@@ -58,6 +62,27 @@ public class BinaryNumber{
     public void printLength(){
         // extra accessor, can remove when done
         System.out.println("Length of Binary Number: " + this.getLength());
+    }
+
+    private void reallocate(int[] originalArr, int newLength){
+
+        // int[] newArr = Arrays.copyOf(originalArr, newLength);
+
+        int[] newArr = new int[newLength];
+
+        int oldArrLength = newLength - originalArr.length;
+        //populate beggining with padded zeros
+        for(int i = 0; i < oldArrLength;i++){
+            newArr[i] = 0;
+        }
+
+        for(int i = 0; i < originalArr.length; i++){
+            newArr[oldArrLength + i] = originalArr[i];
+        }
+
+        data = newArr;
+        
+
     }
 
 
