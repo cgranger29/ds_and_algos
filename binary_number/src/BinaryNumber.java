@@ -5,17 +5,24 @@ public class BinaryNumber{
     private int data[];
     private boolean overflow;
     
-    public BinaryNumber(int length){
+    public BinaryNumber(int length) throws Exception{
+
+        if(length <= 0){
+            throw new Exception("Int must be greater than 0.");
+        }
         data = new int[length];
         for(int i = 0; i < length; i++){
             data[i] = 0;
         }
     }
 
-    public BinaryNumber(String str){
+    public BinaryNumber(String str) throws Exception{
         data = new int[str.length()];
         
         for(int i = 0; i < str.length(); i++){
+            if (Character.getNumericValue(str.charAt(i)) != 0 && Character.getNumericValue(str.charAt(i)) != 1){
+                throw new Exception("String must only contain 0 or 1. " + Character.getNumericValue(str.charAt(i)) + " is invalid.");
+            }
             data[i] = Character.getNumericValue(str.charAt(i));
         }
     }
@@ -47,23 +54,21 @@ public class BinaryNumber{
         } else if(aBinaryNumber.getLength() < data.length){
             aBinaryNumber.shiftR((data.length - aBinaryNumber.getLength()));
 
-            System.out.println("aBinaryNumber padded and is now: " + aBinaryNumber.toString());
         } else{
             shiftR((aBinaryNumber.getLength() - this.getLength()));
-            System.out.println("Current object padded and is now: " + this.toString());
         }
 
         //now the add logic, need to loop from end to start and keep track of carryover
         boolean carryOver = false;
         int[] newNum = new int[this.getLength()];
 
-        System.out.println("Adding: " + this.toString() + " and " + aBinaryNumber.toString());
         //new array to hold new binary number
         for (int i = 0; i < this.getLength(); i++){
             newNum[i] = 0;
         }
         
         for(int i = this.getLength() - 1; i >= 0; i--){
+
             if(this.getDigit(i) == 0 && aBinaryNumber.getDigit(i) == 0 && !carryOver){
                 newNum[i] = 0;
 
@@ -88,19 +93,33 @@ public class BinaryNumber{
                 carryOver = true;
 
             }
+            
+
         }
 
-        //need one last check in the above that states if its the last iteration of the loop and we get a 1 + 1 + 1 (carryOver is true)
-        //then we need to add one to the start of the binary number (so if above true and num is 1100 we make it 11100)
-
-        data = newNum;
+        if(carryOver){
+            this.data = newNum;
+            this.addOneToArr();
+        } else{
+            this.data = newNum;
+        }
         
       
     }
 
     @Override
     public String toString(){
-        return Arrays.toString(data);
+        if (this.toDecimal() >= Integer.MAX_VALUE){
+            this.overflow = true;
+            return "Overflow";
+        }
+
+        String newStr = "";
+
+        for(int i = 0; i < this.getLength(); i ++){
+            newStr += Integer.toString(data[i]);
+        }
+        return newStr;
     }
 
     public int toDecimal(){
@@ -119,7 +138,21 @@ public class BinaryNumber{
     }
 
     public void clearOverflow(){
-        // need to implement
+        this.data = new int[1];
+        this.data[0] = 0;
+        this.overflow = false;
+        System.out.println("Overflow cleared and binary number set to " + this.toString());
+    }
+
+    public void addOneToArr(){
+        int[] newArr = new int[this.getLength() + 1];
+
+        newArr[0] = 1;
+        for(int i = 0; i < this.data.length; i++){
+            newArr[i + 1] = this.data[i];
+        }
+
+        this.data = newArr;
     }
 
     public void getBinaryNumber(){
