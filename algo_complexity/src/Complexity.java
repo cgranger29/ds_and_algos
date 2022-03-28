@@ -1,3 +1,5 @@
+// Cody Granger HW 2
+
 public class Complexity {
 
     public static int[] bst_arr = {1,2,3,4,5,6};
@@ -95,7 +97,13 @@ public class Complexity {
     }
 
     public static void method5(){
-        // loglogn, this needs to divide by n amount
+        // loglogn, take rounded sqrt of num until num == 1
+        double test_num = 65536.0;
+
+        while (test_num != 1){
+            test_num = Math.round(Math.sqrt(test_num));
+            System.out.println(test_num);
+        }
     }
     public static void main(String args[]){
         method1();
@@ -105,5 +113,7 @@ public class Complexity {
         method3();
         System.out.println("");
         method4();
+        System.out.println("");
+        method5();
     }
 }
