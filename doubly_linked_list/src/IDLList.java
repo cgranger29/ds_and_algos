@@ -9,21 +9,26 @@ public class IDLList<E>{
     private ArrayList<Node<E>> indices;
 
     public IDLList(){
+        // constructor for an empty DLL.
         head = null;
         tail = null;
         size = 0;
         indices = new ArrayList<Node<E>>();
     }
 
-    public E get(int index) throws Exception{
-        System.out.println(this.indices.size());
+    public E get(int index){
+        // Gets the node in the DLL by index.
+
         if (index >= this.indices.size()){
-             throw new Exception("Index is out of range. Index must be between 0 and " + (this.indices.size() - 1));
+             System.out.println("Index is out of range. Index must be between 0 and " + (this.indices.size() - 1));
+             return null;
         }
         return this.indices.get(index).data;
     }
 
     public E getHead(){
+        // return head of DLL. If DLL is empty returns null.
+
         if (this.head == null){
             return null;
         }
@@ -31,6 +36,8 @@ public class IDLList<E>{
     }
 
     public E getLast(){
+        // return tail of the DLL. If DLL is empty returns null.
+
         if(this.tail == null){
             return null;
         }
@@ -38,6 +45,8 @@ public class IDLList<E>{
     }
 
     public boolean append(E elem){
+        // appends elem to the end of the LL.
+
         Node<E> target_node = new Node<E>(elem);
         if(this.size == 0){
             this.indices.add(target_node);
@@ -58,6 +67,8 @@ public class IDLList<E>{
     }
 
     public boolean add(E elem){
+        // adds elem to the head of the LL.
+
         Node<E> target_node = new Node<E>(elem);
         if(this.size == 0){
             this.indices.add(target_node);
@@ -83,9 +94,9 @@ public class IDLList<E>{
         return true;
     }
 
-    public String toString(){
-        // coding this as a helper that shows links for now.
-        // need to change once complete to output proper format
+    public void outputNodesAndLinks(){
+        // helper function to iterate LL and print current node with prev and next node links. This is just a helper/convenience function for testing
+
         for(Node<E> node: this.indices){
             System.out.println("Current node is: " + node.data + ", reference ID: " + node);
             if (node.prev == null){
@@ -103,22 +114,36 @@ public class IDLList<E>{
 
         System.out.println(this.indices.toString());
         System.out.println("Size of indices is " + this.size);
-        return "";
+    }
+    public String toString(){
+        /*
+            Outputs LL in string format. Output is structured as node.data->node.data->....-> with empty pointer at end denoting a null terminator.
+            If LL is empty, a blank string is returned
+        */
+        if(this.size == 0){
+            System.out.println("DLL is currently empty.");
+            return "";
+        }
+        String return_string = "";
+        for(Node<E> node: this.indices){
+            return_string += node.data.toString() + "->";        
+        }
+
+        return return_string;
     }
 
-    public boolean add(int index, E elem)throws Exception{
-        /*
-        Cases to handle:
+    public int size(){
+        return this.size;
+    }
 
-        - if index passed in is == size then its valid and we just add to the end of list. So invalid is anything < 0 or anything > indices.size()
-        - if index passed in is >- size of indices then its out of range and we throw an exception.
-        - if index == 0 the add method already implemented handles both size of 0 and size > 0;
-        - if index == indices.size() then we only need to modify tail so append can be used
-        - for all other cases its assumed that there is a prev and next pointer that needs to be changed
+    public boolean add(int index, E elem){
+        /*
+        Adds elem to designated index in LL. Returns true if added else throws exception if index is out of range.
 
         */
         if(index > this.indices.size() || index < 0){
-            throw new Exception("Index is out of range. Index must be between 0 and " + (this.indices.size()));
+            System.out.println("Index is out of range. Index must be between 0 and " + (this.indices.size()));
+            return false;
         } else if(index == 0){
             // either add or append can be used here
             this.add(elem);
@@ -142,8 +167,10 @@ public class IDLList<E>{
     }
 
     public E remove(){
+        // Removes head of LL and returns if value found else returns null.
+
         if(this.head == null){
-            System.out.println("The LL is current empty. Nothing to be removed.");
+            System.out.println("The DLL is currently empty. No nodes to remove.");
             return null;
         } else if(this.size == 1){
             this.head = null;
@@ -167,8 +194,10 @@ public class IDLList<E>{
     }
 
     public E removeLast(){
+        // Removes tail of LL if found. Else returns null
+
         if(this.tail == null){
-            System.out.println("The LL is current empty. Nothing to be removed.");
+            System.out.println("The DLL is currently empty. No nodes to remove.");
             return null;
         } else if(this.size == 1){
             Node<E> target_node = this.tail;
@@ -187,10 +216,11 @@ public class IDLList<E>{
     }
 
     public E removeAt(int index){
+        // Removes specified elem at provided index. Returns null if index is out of range.
+
         if(index < 0 || index >= this.size){
             if(this.size == 0){
-                System.out.println("The DLL is currently empty. No nodes to remove");
-                return null;
+                System.out.println("The DLL is currently empty. No nodes to remove.");
             }else{
                 System.out.println("Index " + index + " is out of range. Provided index must be between 0 and " + (this.size - 1));
             }
@@ -212,16 +242,36 @@ public class IDLList<E>{
         }
     }
 
+    public boolean remove(E elem){
+        // removes elem if node.data is equal to elem and returns true. If elem not found in LL returns false.
+
+        for(int i = 0; i < this.indices.size(); i++){
+            if(indices.get(i).data == elem){
+                System.out.println("Node with value of " + elem + " found in LL...Removing node.");
+                this.removeAt(i);
+                return true;
+            }
+        }
+        System.out.println("Node with value of " + elem + " NOT found in LL.");
+        return false;
+    }
+
     private static class Node<E>{
+        // Inner node class
+
         E data;
         Node<E> next;
         Node<E> prev;
 
         public Node(E elem){
+            //Construtor for Node with just elem provided.
+
             this.data = elem;
         }
 
         public Node(E elem, Node<E> next, Node<E> prev){
+            //Constructor for node where elem, prev, and next are provided
+    
             this.data = elem;
             this.next = next;
             this.prev = prev;
