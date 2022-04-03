@@ -16,6 +16,7 @@ public class IDLList<E>{
     }
 
     public E get(int index) throws Exception{
+        System.out.println(this.indices.size());
         if (index >= this.indices.size()){
              throw new Exception("Index is out of range. Index must be between 0 and " + (this.indices.size() - 1));
         }
@@ -29,7 +30,7 @@ public class IDLList<E>{
         return this.head.data;
     }
 
-    public E getTail(){
+    public E getLast(){
         if(this.tail == null){
             return null;
         }
@@ -48,8 +49,11 @@ public class IDLList<E>{
                 temp_head = temp_head.next;
             }
             temp_head.next = target_node;
+            target_node.prev = temp_head;
             this.tail = target_node;
         }
+
+        this.size += 1;
         return true;
     }
 
@@ -62,6 +66,7 @@ public class IDLList<E>{
             //update head
             Node<E> temp_head = this.head;
             this.head = target_node;
+            temp_head.prev = target_node;
             this.head.next = temp_head;
             this.indices.add(0, this.head);
             this.size = this.indices.size();
@@ -74,8 +79,51 @@ public class IDLList<E>{
 
             this.tail = temp_tail;
 
+        }
+        this.size += 1;
+        return true;
+    }
+
+    public String toString(){
+        // coding this as a helper that shows links for now.
+        // need to change once complete to output proper format
+        String return_string = "";
+        for(Node<E> node: this.indices){
+            System.out.println("Current node is: " + node.data);
+            if (node.prev == null){
+                System.out.println("Prev node for " + node.data + " is " + null);
+            } else{
+                System.out.println("Prev node for " + node.data + " is "  + node.prev.data);
+            }
+
+            if(node.next == null){
+                System.out.println("Next node for " + node.data + " is " + null);
+            } else {
+                System.out.println("Next node for " + node.data + " is " + node.next.data);
+            }
+        }
+
+        return return_string;
+    }
+
+    public boolean add(int index, E elem)throws Exception{
+        /*
+        Cases to handle:
+
+        - if index passed in is == size then its valid and we just add to the end of list. So invalid is anything < 0 or anything > indices.size()
+        - if index passed in is >- size of indices then its out of range and we throw an exception.
+        - if index == 0 and indices size == 0 then we can just add to indices and set head to elem
+        - if index == 0 and indices size != 0 then we modify the head
+        - if index == indices.size() - 1 then we only need to modify tail.
+        - for all other cases its assumed that there is a prev and next pointer that needs to be changed
+
+        */
+        if(index > this.indices.size() || index < 0){
+            throw new Exception("Index is out of range. Index must be between 0 and " + (this.indices.size()));
+        } else if(this.indices.size() == 0 && index == 0){
 
         }
+
         return true;
     }
 
