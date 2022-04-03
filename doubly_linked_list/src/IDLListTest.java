@@ -13,9 +13,13 @@ class IDLListTest{
             test_list.add(1);
             test_list.append(2);
             test_list.append(3);
-            test_list.add(1,4);
-            test_list.add(3,5);
-            test_list.add(0,6);
+            test_list.append(4);
+            System.out.println("Node " + test_list.removeAt(1) + " removed.");
+            System.out.println("Node " + test_list.removeAt(1) + " removed.");
+            System.out.println("Node " + test_list.removeAt(1) + " removed.");
+            System.out.println("Node " + test_list.removeAt(0) + " removed.");
+            System.out.println("Node " + test_list.removeAt(0) + " removed.");
+
         } catch(Exception e){
             System.out.println(e);
         }

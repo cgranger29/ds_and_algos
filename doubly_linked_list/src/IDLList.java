@@ -102,7 +102,7 @@ public class IDLList<E>{
         }
 
         System.out.println(this.indices.toString());
-        System.out.println(this.size);
+        System.out.println("Size of indices is " + this.size);
         return "";
     }
 
@@ -141,6 +141,77 @@ public class IDLList<E>{
         return true;
     }
 
+    public E remove(){
+        if(this.head == null){
+            System.out.println("The LL is current empty. Nothing to be removed.");
+            return null;
+        } else if(this.size == 1){
+            this.head = null;
+            this.tail = null;
+            Node<E> target_node = this.indices.get(0);
+            this.indices.clear();
+            this.size -=1;
+            return target_node.data;
+ 
+        } else{
+            Node<E> target_node = this.head;
+            this.head = this.head.next;
+            this.head.prev = null;
+            this.indices.remove(0);
+            this.size -= 1;
+            return target_node.data;
+
+
+        }
+        
+    }
+
+    public E removeLast(){
+        if(this.tail == null){
+            System.out.println("The LL is current empty. Nothing to be removed.");
+            return null;
+        } else if(this.size == 1){
+            Node<E> target_node = this.tail;
+            this.tail = null;
+            this.head = null;
+            this.size -=1;
+            return target_node.data;
+        } else{
+            Node<E> target_node = this.tail;
+            this.tail = this.tail.prev;
+            this.tail.next = null;
+            this.indices.remove(indices.size() - 1);
+            this.size -=1;
+            return target_node.data;
+        }
+    }
+
+    public E removeAt(int index){
+        if(index < 0 || index >= this.size){
+            if(this.size == 0){
+                System.out.println("The DLL is currently empty. No nodes to remove");
+                return null;
+            }else{
+                System.out.println("Index " + index + " is out of range. Provided index must be between 0 and " + (this.size - 1));
+            }
+            
+            return null;
+        } else if (index == 0){
+            return this.remove();
+        } else if(index == (this.size - 1)){
+            return this.removeLast();
+        } else {
+            Node<E> target_node = this.indices.get(index);
+            Node<E> temp_left = target_node.prev;
+            Node<E> temp_right = target_node.next;
+            temp_right.prev = temp_left;
+            temp_left.next = temp_right;
+            this.indices.remove(index);
+            this.size -=1;
+            return target_node.data;
+        }
+    }
+
     private static class Node<E>{
         E data;
         Node<E> next;
@@ -157,27 +228,4 @@ public class IDLList<E>{
         }
     }
 
-    // public static void main(String[] args){
-    //     IDLList<Integer> test_list = new IDLList<>();
-    //     // ArrayList<Node> test_arr = new ArrayList<Node>();
-    //     // Node test_node = new Node(4);
-    //     // test_arr.add(test_node);
-
-    //     // Node store_node = test_arr.get(0);
-
-    //     // System.out.println(store_node.data);
-    //     test_list.add(1);
-    //     test_list.add(2);
-
-    //     System.out.println(test_list.getHead());
-    //     System.out.println(test_list.getTail());
-
-    //     try{
-    //         System.out.println(test_list.get(1));
-    //     } catch(Exception e){
-    //         System.out.println(e);
-    //     }
-        
-
-    // }
 }
