@@ -39,7 +39,7 @@ public class IDLList<E>{
 
     public boolean append(E elem){
         Node<E> target_node = new Node<E>(elem);
-        if(this.indices.size() == 0){
+        if(this.size == 0){
             this.indices.add(target_node);
             this.head = target_node;
         } else{
@@ -59,7 +59,7 @@ public class IDLList<E>{
 
     public boolean add(E elem){
         Node<E> target_node = new Node<E>(elem);
-        if(this.indices.size() == 0){
+        if(this.size == 0){
             this.indices.add(target_node);
             this.head = target_node;
         } else{
@@ -69,7 +69,6 @@ public class IDLList<E>{
             temp_head.prev = target_node;
             this.head.next = temp_head;
             this.indices.add(0, this.head);
-            this.size = this.indices.size();
 
             //update tail
             Node<E> temp_tail = this.head;
@@ -87,9 +86,8 @@ public class IDLList<E>{
     public String toString(){
         // coding this as a helper that shows links for now.
         // need to change once complete to output proper format
-        String return_string = "";
         for(Node<E> node: this.indices){
-            System.out.println("Current node is: " + node.data);
+            System.out.println("Current node is: " + node.data + ", reference ID: " + node);
             if (node.prev == null){
                 System.out.println("Prev node for " + node.data + " is " + null);
             } else{
@@ -103,7 +101,9 @@ public class IDLList<E>{
             }
         }
 
-        return return_string;
+        System.out.println(this.indices.toString());
+        System.out.println(this.size);
+        return "";
     }
 
     public boolean add(int index, E elem)throws Exception{
@@ -112,15 +112,29 @@ public class IDLList<E>{
 
         - if index passed in is == size then its valid and we just add to the end of list. So invalid is anything < 0 or anything > indices.size()
         - if index passed in is >- size of indices then its out of range and we throw an exception.
-        - if index == 0 and indices size == 0 then we can just add to indices and set head to elem
-        - if index == 0 and indices size != 0 then we modify the head
-        - if index == indices.size() - 1 then we only need to modify tail.
+        - if index == 0 the add method already implemented handles both size of 0 and size > 0;
+        - if index == indices.size() then we only need to modify tail so append can be used
         - for all other cases its assumed that there is a prev and next pointer that needs to be changed
 
         */
         if(index > this.indices.size() || index < 0){
             throw new Exception("Index is out of range. Index must be between 0 and " + (this.indices.size()));
-        } else if(this.indices.size() == 0 && index == 0){
+        } else if(index == 0){
+            // either add or append can be used here
+            this.add(elem);
+        } else if (index == this.size){
+            // if we're looking to add to say index 2 for an array that has size 2 it would be valid and it would just be an append
+            this.append(elem);
+        } else {
+            Node<E> temp_next = this.indices.get(index);
+            Node<E> temp_prev = temp_next.prev;
+            temp_prev.next = null;
+            temp_next.prev = null;
+            Node<E> target_node = new Node(elem, temp_next, temp_prev);
+            temp_prev.next = target_node;
+            temp_next.prev = target_node;
+            indices.add(index, target_node);
+            this.size += 1;
 
         }
 
