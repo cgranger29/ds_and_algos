@@ -1,4 +1,5 @@
 package Maze;
+import java.util.*;
 
 /**
  * Class that solves maze problems with backtracking.
@@ -93,9 +94,127 @@ public class Maze implements GridColors {
         return false;
     }
 
+    public void findMazePathStackBased(int x, int y, ArrayList<ArrayList<PairInt>> result, Stack<PairInt> trace){
+        int maxRow = maze.getNRows() - 1;
+        int maxCol = maze.getNCols() - 1;
+
+        trace.push(new PairInt(x, y));
+
+        //base cases
+        if((x < 0 || y > maxRow)){
+            trace.pop();
+            return;
+        }
+        if ((y < 0 || x > maxCol)){
+            trace.pop();
+            return;
+        }
+
+        if(maze.getColor(x, y) == PATH || maze.getColor(x, y) == NON_BACKGROUND){
+            trace.pop();
+            return;
+
+        } 
+
+        if (maze.getColor(x, y) == BACKGROUND){
+            
+            maze.recolor(x, y, PATH);
+        }
+        if (y == maxRow &&  x== maxCol){
+            ArrayList<PairInt> resultToAdd = new ArrayList<>();
+            PairInt addPair = new PairInt(x, y);
+            
+
+            for(PairInt pair: trace){
+                resultToAdd.add(pair);
+            }
+            result.add(resultToAdd);
+            trace.pop();
+            maze.recolor(x, y, BACKGROUND);
+            return;
+        }
+
+        //check left
+        
+        findMazePathStackBased(x - 1, y, result, trace);
+        // if (result.size() != 0){
+        //     maze.recolor(x,y,PATH);
+        // }
+        //check right
+        findMazePathStackBased(x + 1, y, result, trace);
+        // if(result.size() != 0){
+        //     maze.recolor(x,y,PATH);
+        // }
+        //check up
+        findMazePathStackBased(x, y - 1, result, trace);
+        // if(result.size() != 0){
+        //     maze.recolor(x,y,PATH);
+        // }
+        //check down
+        
+        findMazePathStackBased(x, y + 1, result, trace);
+        // if(result.size() != 0){
+        //     maze.recolor(x,y,PATH);
+        // }
+        maze.recolor(x, y, BACKGROUND);
+        trace.pop();
+        return;
+
+    }
+
     // ADD METHOD FOR PROBLEM 2 HERE
+    public ArrayList<ArrayList<PairInt>> findAllMazePaths(int x, int y) {
+        ArrayList<ArrayList<PairInt>> result = new ArrayList<>();  
+        Stack<PairInt> trace = new Stack <>();
+        findMazePathStackBased(0 ,0 , result , trace);
+        for (ArrayList<PairInt> coordinates: result){
+            System.out.println(coordinates);
+        }
+        return result; 
+        
+
+    }
     
     // ADD METHOD FOR PROBLEM 3 HERE
+
+    public class PairInt{
+        private int x;
+        private int y;
+
+        public PairInt(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX(){
+            return this.x;
+        }
+
+        public int getY(){
+            return this.y;
+        }
+
+        public void setX(int x){
+            this.x = x;
+        }
+
+        public void setY(int y){
+            this.y = y;
+        }
+
+        public boolean equals(Object p){
+            return false;
+        }
+
+        public String toString(){
+            return "(" + this.x + ", " + this.y + ")";
+        }
+
+        public PairInt copy(){
+            PairInt newCopy = new PairInt(this.x, this.y);
+            return newCopy;
+        }
+    }
     
 
     /*<exercise chapter="5" section="6" type="programming" number="2">*/
