@@ -6,11 +6,10 @@ class Treap<E extends Comparable<E>>{
     
     private Random priorityGenerator;
     private Node<E> root;
-    private int depth = 0;
     
     public Treap(){
         //default seed value will just be 1000
-        this.priorityGenerator = new Random(1000);
+        this.priorityGenerator = new Random(10000);
         this.root = null;
     }
 
@@ -19,37 +18,18 @@ class Treap<E extends Comparable<E>>{
         this.root = null;
     }
 
-    public int getDepth(){
-        // will use to implement nice print format if I have time. Something like:
-               /*
-                            4
-                          /   \
-                         3     5
-                        /  \
-                        5   6
-                        will need to calculate max width of each level:
-                       root will be max width of entire tree / 2
-                       each level after will be the prev level + 2 spaces??? one for left and one for right
-                       idk this seems like a lot of work at first glance so TBD
-               */
-        return this.depth;
-    }
-
     public boolean add(E key){
 
         // this just calls add(E key, int priority) and passes in a default priority generation
-        //Integer.MAX_VALUE -1 should prevent negatives from overflow
+        //bounding it to 10000, can be modified if you want a greater rng factor and less chance of collision
 
-        // int add_priority = this.priorityGenerator.nextInt(Integer.MAX_VALUE - 1);
-        int add_priority = this.priorityGenerator.nextInt(1000);
+        int add_priority = this.priorityGenerator.nextInt(10000);
 
         return this.add(key, add_priority);
 
     }
 
     public boolean add(E key, int priority){
-        //Integer.MAX_VALUE -1 should prevent negatives from overflow
-        // int add_priority = this.priorityGenerator.nextInt(Integer.MAX_VALUE - 1);
         Node<E> add_node = new Node(key, priority);
 
         this.root = recursiveAdd(this.root, add_node, priority);
@@ -88,7 +68,7 @@ class Treap<E extends Comparable<E>>{
     }
     public void reheap(Stack<Node<E>> path, Node<E> root){
 
-        // not needed in recursive solution
+        // not needed in recursive solution, left it in anyway
         while(path.size() != 0){
             Node<E> temp_root = path.pop();
             if (temp_root.right != null && temp_root.right.priority > temp_root.priority){
@@ -105,8 +85,90 @@ class Treap<E extends Comparable<E>>{
     }
 
     public boolean delete(E key){
-        //implement
-        return false;
+        //adding helper with root parameter so we can recursively solve this.
+        // a priority has to be passed in but since we are just initalizing it for comparison we will just pass in 0
+        
+        //adding a find for initial key check
+        if (this.find(key) == false){
+            return false;
+        } 
+        Node<E> nodeToDelete = new Node(key, 0);
+        Node<E> recursiveTreapReturn = recursiveDelete(root, nodeToDelete);
+        this.root = recursiveTreapReturn;
+        return true;
+    }
+
+    public Node<E> recursiveDelete(Node<E> root, Node<E> nodeToDelete){
+        /*
+        delete will be fairly similar to add. We search the treap until we find the node to delete. After deletion we link necessary nodes
+        and afterwards we would need to perform rotations if the heap is not satisfied. There are a few cases to consider:
+
+        - if node to delete has no children we're good and we can just set to null (favorite case)
+        - if node has one child i dont think any rotation would be needed since treap should already be a max heap (not sure on this yet)
+        - finally if node to delete has two children we need to rotate based on priority. It should follow the same logic as the add so not really any new code getting added here
+        
+        recursive solve cases
+
+        - if root is null we just return null (base)
+        - go left if root.val < search key
+        - go right otherwise
+        - traverse till we either find the node to delete and then we need to consider above cases or we dont find the node to delete and nothing to be done
+        */
+        //base is if root is null nothing to delete
+        if(root == null){
+            return null;
+        }
+
+        //greater than 
+        if(root.data.compareTo(nodeToDelete.data) < 0){
+            //this has to be root.right because we are modifying the right subtree. root doesnt work in this case.....
+            root.right = recursiveDelete(root.right, nodeToDelete);
+            //less than, same logic as right we need to set root.left subtree to the return value of the recursive call
+        } else if(root.data.compareTo(nodeToDelete.data) > 0){
+            root.left = recursiveDelete(root.left, nodeToDelete);
+        } else{
+            // if root is equal to node to delete we can begin our tests for cases
+        
+
+        //start from 0 children and work are way up to 2
+
+        //0 children is just set root to null if no children
+        if (root.left == null && root.right == null){
+            root = null;
+        
+        // if there is only one child we just need to set current node we are on (the target node to delete) to its child that is not null. no rotation needed
+        } else if((root.left == null && root.right != null) || (root.right == null && root.left != null)){
+            // need two different cases here to check which side is not null
+            
+            if(root.left != null){
+                Node<E> childNode = root.left;
+                root = childNode;
+            } else{
+                Node<E> childNode = root.right;
+                root = childNode;
+            }
+            // root = null;
+        }
+
+        //last case is there are two children. This one needs rotations but we arent comparing the priorities of the root since its being deleted
+        // we need to compare the left and right children priority and rotate based on that
+        // also similar to above we need to either set root.left or root.right depending on outcome
+        else{
+            if(root.left.priority < root.right.priority){
+                // left rotations we set root.left to recursive return and same logic for right
+                root = root.rotateLeft();
+
+                root.left = recursiveDelete(root.left, nodeToDelete);
+            } else{
+                root = root.rotateRight();
+                root.right = recursiveDelete(root.right, nodeToDelete);
+            }
+        }
+
+        // need to return at the end for this to work
+        
+        }
+        return root;
     }
 
     private boolean find(Node<E> root, E key){
@@ -151,6 +213,7 @@ class Treap<E extends Comparable<E>>{
             Node<E> currNode = treapStack.pop();
             if(currNode != null){
                 if(currNode.data == key){
+                    System.out.println("Found key: " + key + " in treap.");
                     return true;
                 } 
                 treapStack.add(currNode.left);
@@ -159,24 +222,32 @@ class Treap<E extends Comparable<E>>{
 
         }
         //end of stack and no return == key not found
+        System.out.println("Key " + key + " not found in treap.");
         return false;
     }
 
     public String toString(){
-        toStringHelper(this.root);
-        return "";
+        String treapStr = "";
+
+        
+        return toStringHelper(this.root, treapStr);
+  
         
     }
 
-    private void toStringHelper(Node<E> root){
+    private String toStringHelper(Node<E> root, String treapStr){
         //prorder traversal
         if(root == null){
-            System.out.println("null ");
+
+            treapStr += "[null] (null) (null);";
+            return treapStr;
         } else{
-            System.out.println(root.toString() + " ");
-            toStringHelper(root.left);
-            toStringHelper(root.right);
+            treapStr += root.toString() + " ";
+            treapStr = toStringHelper(root.left, treapStr);
+            treapStr = toStringHelper(root.right, treapStr);
         }
+
+        return treapStr;
     }
 
     
@@ -236,23 +307,44 @@ class Treap<E extends Comparable<E>>{
     public static void main(String[] args){
         Treap<Integer> test_int_treap = new Treap();
         Treap<String> test_string_treap = new Treap();
+
+        //int treap testing
         test_int_treap.add(5);
         test_int_treap.add(4);
         test_int_treap.add(6);
         test_int_treap.add(7);
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_int_treap.toString());
+        System.out.println("##########");
         test_int_treap.add(3);
         test_int_treap.add(2);
         test_int_treap.find(20);
-        test_int_treap.toString();
-
-        System.out.println("\nTREE CURRENT DEPTH IS " + test_int_treap.getDepth());
+        test_int_treap.delete(4);
+        test_int_treap.delete(40);
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_int_treap.toString());
+        System.out.println("##########");
 
         //string treap testing
-        // test_string_treap.add("a");
-        // test_string_treap.add("b");
+        test_string_treap.add("f");
+        test_string_treap.add("b");
+        test_string_treap.add("e");
+        test_string_treap.add("h");
+        test_string_treap.add("z");
+        test_string_treap.add("l");
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_string_treap.toString());
+        System.out.println("##########");
+        test_string_treap.delete("e");
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_string_treap.toString());
+        System.out.println("##########");
+        test_string_treap.delete("i");
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_string_treap.toString());
+        System.out.println("##########");
+        test_string_treap.find("b");
+        test_string_treap.find("m");
         
-
-
-
     }
 }
