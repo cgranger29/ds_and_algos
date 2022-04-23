@@ -14,7 +14,7 @@ class Treap<E extends Comparable<E>>{
     }
 
     public Treap(long seed){
-        this.priorityGenerator = new Random(seed);
+        this.priorityGenerator = new Random(seed);;
         this.root = null;
     }
 
@@ -313,41 +313,38 @@ class Treap<E extends Comparable<E>>{
         test_int_treap.add(4);
         test_int_treap.add(6);
         test_int_treap.add(7);
-        test_int_treap.add(7);
-        test_int_treap.add(7);
-        test_int_treap.add(8);
         System.out.println("#####CURRENT TREAP IS : #####");
         System.out.println(test_int_treap.toString());
         System.out.println("##########");
-        // test_int_treap.add(3);
-        // test_int_treap.add(2);
-        // test_int_treap.find(20);
-        // test_int_treap.delete(4);
-        // test_int_treap.delete(40);
-        // System.out.println("#####CURRENT TREAP IS : #####");
-        // System.out.println(test_int_treap.toString());
-        // System.out.println("##########");
+        test_int_treap.add(3);
+        test_int_treap.add(2);
+        test_int_treap.find(20);
+        test_int_treap.delete(4);
+        test_int_treap.delete(40);
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_int_treap.toString());
+        System.out.println("##########");
 
-        // //string treap testing
-        // test_string_treap.add("f");
-        // test_string_treap.add("b");
-        // test_string_treap.add("e");
-        // test_string_treap.add("h");
-        // test_string_treap.add("z");
-        // test_string_treap.add("l");
-        // System.out.println("#####CURRENT TREAP IS : #####");
-        // System.out.println(test_string_treap.toString());
-        // System.out.println("##########");
-        // test_string_treap.delete("e");
-        // System.out.println("#####CURRENT TREAP IS : #####");
-        // System.out.println(test_string_treap.toString());
-        // System.out.println("##########");
-        // test_string_treap.delete("i");
-        // System.out.println("#####CURRENT TREAP IS : #####");
-        // System.out.println(test_string_treap.toString());
-        // System.out.println("##########");
-        // test_string_treap.find("b");
-        // test_string_treap.find("m");
+        //string treap testing
+        test_string_treap.add("f");
+        test_string_treap.add("b");
+        test_string_treap.add("e");
+        test_string_treap.add("h");
+        test_string_treap.add("z");
+        test_string_treap.add("l");
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_string_treap.toString());
+        System.out.println("##########");
+        test_string_treap.delete("e");
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_string_treap.toString());
+        System.out.println("##########");
+        test_string_treap.delete("i");
+        System.out.println("#####CURRENT TREAP IS : #####");
+        System.out.println(test_string_treap.toString());
+        System.out.println("##########");
+        test_string_treap.find("b");
+        test_string_treap.find("m");
         
     }
 }
